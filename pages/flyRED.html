@@ -7,13 +7,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <style>
+        * { padding: 0; margin: 0; box-sizing: border-box; }
         body { font-family: 'Calibri', sans-serif; background-color: #BB1010; display: flex; justify-content: center; padding: 20px; color: #333; }
-        .header_container { max-width: 1190px; padding: 0 15px; margin: 0 auto; align-self: center; }
-        .logo_academy { width: 200px; cursor: pointer;}
-        .container { background-color: #f0f0f0; padding: 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 950px; width: 100%; }
+        .field_container { background-color: #f0f0f0; padding: 10px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); max-width: 950px; width: 100%; }
         h2 { text-align: center; color: #BB1010; margin-top: 0; border-bottom: 2px solid #BB1010; padding-bottom: 10px; }
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        fieldset { border: 1px solid #ccc; border-radius: 5px; margin-bottom: 15px; padding: 10px; background: white; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        fieldset { border: 1px solid #ccc; border-radius: 5px; margin-bottom: 5px; padding: 10px; background: white; }
         legend { font-weight: bold; color: #BB1010; padding: 0 5px; }
         .form-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
         input, select { padding: 6px; width: 160px; text-align: right; border: 1px solid #ccc; border-radius: 4px; }
@@ -21,7 +20,7 @@
         .readonly-box_pTipe { background-color: #eee; border: 1px solid #bbb; padding: 6px; width: 140px; text-align: left; font-weight: bold; display: inline-block; border-radius: 4px; }
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {-webkit-appearance: none;margin: 0;} /* Ocultar flechas en chrome */
         input[type="number"] { appearance: none;-moz-appearance: textfield;}/* Ocultar flechas en Firefox */
-        .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 30px; }
+        .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
         button { padding: 12px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s; }
         button:hover { opacity: 0.8; }
         .btn-calc { background-color: #1E8449; grid-column: span 2; font-size: 1.1em; }
@@ -36,24 +35,9 @@
     </style>
 </head>
 <body>
-    <header>
-        <a href="../index.html">
-        <img class="logo_academy" src="../images/academy-red.png" alt="LOGO">
-        </a>
-        <div class="header_container">
-            <nav class="menu_superior">
-                <ul>
-                    <li>Próxima Edición</li>
-                    <li>Operaciones</li>
-                    <li>Administración</li>
-                    <li>Contactos</li>
-                    <li>Ayuda</li>
-                </ul>
-            </nav>
-        </div>
-        <button>Registrarse</button>
-    </header>
-    <div class="container">
+    
+    <div class="field_container">
+        <span><a href="../index copy.html">Volver</a></span>
         <h2>Cotizador FlyRED - Ricale Academy - v.Mar26 Pro </h2>
 
         <div class="grid-layout">
