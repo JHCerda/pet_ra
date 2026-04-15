@@ -31,8 +31,8 @@
         .total-box { grid-column: span 2; background-color: #fff; padding: 15px; border: 2px solid #BB1010; border-radius: 5px; margin-top: 1px; }
         
         /* Estilo para el área del PDF (Oculta en la web, visible en el archivo) */
-        #resumen-pdf { padding: 10px; color: black; background: white; display: none; }
-        .pdf-header { border-bottom: 2px solid #BB1010; margin-bottom: 20px; }
+        #resumen-pdf { padding: 10px; color: black; background: white; display:none; margin: 0 auto; border-radius: 8px}
+        .pdf-header { border-bottom: 2px solid #BB1010; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -134,14 +134,14 @@
 
     <div id="resumen-pdf">
         <div class="pdf-header">
-            <h1>Resumen de Cotización - FlyRED</h1>
-            <p>Generado automáticamente por Cotizador Ricale Academy - FlyRED - v.Mar26 Pro</p>
+            <h2>Resumen de Cotización</h2>
+            <p style="text-align: center;">Generado automáticamente por Cotizador - FlyRED - v. Pro Mar26</p>
         </div>
         <div id="pdf-content"></div>
     </div>
 
     <script>
-        const trf_charge = 0.012, tc_charge = 0.072, rg_afip_4815 = 0.05;
+        const trf_charge = 0.012, tc_charge = 0.072, rg_4815 = 0.05;
         let datosUltimaCoti = {};
 
         function calcular() {
@@ -157,6 +157,7 @@
                 over: parseFloat(document.getElementById('flyred_over').value) || 0,
                 sfee: parseFloat(document.getElementById('srv_fee').value) || 0,
                 cli: document.getElementById('client_info').value,
+                cuit: document.getElementById('client_cuit').value,
                 pnr: document.getElementById('client_pnr').value
             };
             
@@ -177,7 +178,7 @@
             let posnet = 0;
             if (d.pTipe === "Transferencia") sale_info = val_prod / (1 - trf_charge);
             else if (d.pTipe === "Depósito" && d.dest === "internacional") {
-                let val_rg = d.fare * rg_afip_4815;
+                let val_rg = d.fare * rg_4815;
                 sale_info = (val_prod + val_rg) / (1 - trf_charge);
             } else if (d.pTipe === "Tarjeta de Crédito") {
                 uatp = d.fare + d.tax;
@@ -206,22 +207,23 @@
             if (!datosUltimaCoti.sale_info) { swal("Ooops","Para descargar el PDF primero debes realizar una cotización.","warning" ); return; }
             
             const content = `
-                <h2>Cotización Aérea - Itinerario/PNR ${datosUltimaCoti.pnr}</h2>
+                <h3 style="color: #BB1010">Cotización FlyRED - ${datosUltimaCoti.pnr}</h3>
                 <hr>
-                <h3>Datos del Cliente</h3>
-                <p>ID_Cliente: ${datosUltimaCoti.cli}</p>
-                <p>PNR o Detalle Itinerario: ${datosUltimaCoti.pnr}</p>
+                <h4>Datos del Cliente</h4>
+                <p>ID_Cliente: ${datosUltimaCoti.cli} - CUIT: ${datosUltimaCoti.cuit}</p>
                 <hr>
-                <h3>Detalle de la cotización</h3>
+                <h4>Detalle de la cotización</h4>
+                <p>Moneda de Pago: ${datosUltimaCoti.pCurr}</p>
                 <p>Forma de Pago: ${datosUltimaCoti.pTipe}</p>
-                <p>Moneda ${datosUltimaCoti.pCurr}<p>
-                <p>Tarifa: ${datosUltimaCoti.fare.toFixed(2)} <p>    
+                <p>Tarifa: ${datosUltimaCoti.fare.toFixed(2)} </p>    
                 <p>Impuestos: ${datosUltimaCoti.tax.toFixed(2)}</p>
                 <p>Fee Ricale: ${datosUltimaCoti.ifee.toFixed(2)}</p>
                 <p>Fee Adicional Promotor: ${datosUltimaCoti.sfee.toFixed(2)}</p>
-                <p>Gastos por Forma de Pago: [${datosUltimaCoti.pTipe}]  ${datosUltimaCoti.gastos.toFixed(2)}</p>
+                <p>Gastos por ${datosUltimaCoti.pTipe}:  ${datosUltimaCoti.gastos.toFixed(2)}</p>
+                <hr>
                 <h3 style="color: #BB1010">Importe Final a Facturar al Cliente: ${datosUltimaCoti.pCurr} ${datosUltimaCoti.sale_info.toFixed(2)} </h3>
                 <h3 style="color: #BB1010">Rentabilidad Total a Cobrar Neta de Impuestos: ${datosUltimaCoti.pCurr} ${datosUltimaCoti.rent_final.toFixed(2)} </h3>
+                <hr>
             `;
             
             const element = document.getElementById('resumen-pdf');
@@ -230,7 +232,7 @@
             
             html2pdf().from(element).set({
                 margin: 1,
-                filename: `Cotizacion_${datosUltimaCoti.pnr || 'FlyRED'}.pdf`,
+                filename: `Cotización ${datosUltimaCoti.pnr || 'FlyRED'}.pdf`,
                 html2canvas: { scale: 2 },
                 jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             }).save().then(() => { element.style.display = 'none'; });
@@ -239,11 +241,11 @@
         function enviarEmail() {
             if (!datosUltimaCoti.sale_info) { swal("Ooops","Para enviar el mail primero debes realizar una cotización.","warning" ); return; }
             
-            const asunto = encodeURIComponent(`Cotización Aérea - Itinerario/PNR ${datosUltimaCoti.pnr}`);
+            const asunto = encodeURIComponent(`Cotización FlyRED - Reserva ${datosUltimaCoti.pnr}`);
             const cuerpo = encodeURIComponent(
-                `Hola,\nEnvio detalles de la cotización:\n` +
-                `- ID_Cliente: ${datosUltimaCoti.cli}\n` +
-                `- PNR o Detalle Itinerario: ${datosUltimaCoti.pnr}\n` +
+                `Hola,\nEnvio detalles de la cotización Aérea:\n` +
+                `- Reserva / Localizador: ${datosUltimaCoti.pnr}\n` +
+                `- ID_Cliente: ${datosUltimaCoti.cli} - CUIT: ${datosUltimaCoti.cuit}\n` +
                 `-----------------------------------------------------------------------------\n` +
                 `- Forma de Pago: ${datosUltimaCoti.pTipe}\n` +
                 `- Moneda: ${datosUltimaCoti.pCurr}\n` +

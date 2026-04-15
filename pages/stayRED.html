@@ -30,8 +30,8 @@
         .btn-mail { background-color: #007BFF; grid-column: span 2; }
         .total-box { grid-column: span 2; background-color: #fff; padding: 15px; border: 2px solid #BB1010; border-radius: 5px; margin-top: px; }
         
-        #resumen-pdf { padding: 40px; color: black; background: white; display: none; }
-        .pdf-header { border-bottom: 2px solid #BB1010; margin-bottom: 20px; }
+        #resumen-pdf { padding: 10px; color: black; background: white; display: none; margin: 0 auto; border-radius: 8px; }
+        .pdf-header { border-bottom: 2px solid #BB1010; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -84,8 +84,8 @@
                     <div class="form-group"><label>Precio Base StayRED:</label><input type="number" id="stayred_fare" value="0.00"></div>
                 </fieldset>
                 <fieldset>
-                    <legend>Adicional Promotor</legend>
-                    <div class="form-group"><label>Fee Promotor:</label><input type="number" id="srv_fee" value="0.00" min="0"></div>
+                    <legend>Adicional Promotor en Dólares</legend>
+                    <div class="form-group"><label>Fee Promotor</label><input type="number" id="srv_fee" value="0.00" min="0"></div>
                 </fieldset> 
                 
             </div>
@@ -108,11 +108,11 @@
                 <div style="margin-top: 5px;">
                 <fieldset>
                     <legend>Calculos de Tarifa</legend>
-                    <div class="form-group"><label>Valores en Moneda:</label><span id="out_pCurre" class="readonly-box">_</span></div>
+                    <div class="form-group"><label>Valores en Moneda:</label><span id="out_pCurr" class="readonly-box">_</span></div>
                     <div class="form-group"><label>Tarifa sin Impuestos:</label><span id="out_fare" class="readonly-box">0.00</span></div>
                     <div class="form-group"><label>Impuestos:</label><span id="out_tax" class="readonly-box">0.00</span></div>
                     <div class="form-group"><label>Costo del Producto:</label><span id="out_cost" class="readonly-box">0.00</span></div>              
-                    <div class="form-group"><label>Comisión del Producto StayRED:</label><span id="out_cost" class="readonly-box">0.00</span></div>
+                    <div class="form-group"><label>Comisión del Producto StayRED:</label><span id="out_comi" class="readonly-box">0.00</span></div>
                 </fieldset>
                 </div>
             </div>
@@ -132,18 +132,17 @@
         </div>
     </div>
 
-        <div id="resumen-pdf">
-            <div class="pdf-header">
-                <h1>Resumen de Cotización Terrestre - StayRED</h1>
-                <p>Generado por Ricale Academy</p>
-            </div>
+    <div id="resumen-pdf">
+        <div class="pdf-header">
+            <h2>Resumen de Cotización</h2>
+            <p style="text-align: center; ">Generado automáticamente por Cotizador - StayRED - v. Pro Mar26</p>
+        </div>
         <div id="pdf-content"></div>
     </div>
 
     <script>
-        // Coeficientes StayRED
-        const RG_3819 = 0.30, IVA = 0.21, MUP_RICALE = 0.80, COMI_RICALE = 0.20;
-        const COMI_PROM_ACADEMY = 0.10, TRF_CHARGE = 0.012, RG_4815 = 0.05;
+        const rg_3819 = 0.30, iva = 0.21, mup_Ricale = 0.80, comi_Ricale = 0.20;
+        const comi_Prom = 0.10, trf_charge = 0.012, rg_4815 = 0.05;
         
         let datosCoti = {};
 
@@ -152,17 +151,14 @@
                 dest: document.getElementById('srv_dest').value,
                 pCurr: document.getElementById('pay_curr').value,
                 pTipe: document.getElementById('pay_tipe').value,
+                sCurr: document.getElementById('stayred_curr').value,
                 fare: parseFloat(document.getElementById('stayred_fare').value) || 0,
                 tdc: parseFloat(document.getElementById('stayred_tdc').value) || 0,
                 sfee: parseFloat(document.getElementById('srv_fee').value) || 0,
                 cli: document.getElementById('client_info').value,
+                cuit: document.getElementById('client_cuit').value,
                 pnr: document.getElementById('client_pnr').value
             };
-            /*alert (`Importe tarifa: $${d.fare.toFixed(2)} - Importe tipo de cambio: $${d.tdc.toFixed(2)}`)*/
-            /*alert (`Importe service Fee: $${d.sfee.toFixed(2)}`)*/
-            /*alert (`Importe destino: ${d.dest}`)*/
-            /*alert (`Importe moneda: ${d.pCurr}`)*/
-            /*alert (`Importe metodo: ${d.pTipe}`)*/
             
             // Validaciones del código original
             if (!d.dest || !d.pCurr || !d.pTipe || d.fare === 0) { swal("Verificar los Datos","Todos los campos son obligatorios para realizar la cotización.","error"); return; }
@@ -174,81 +170,112 @@
 
             let prod_fare = 0 ;
             let prod_tax = 0 ;
+            
                 
             // Lógica de Impuestos StayRED
             if (d.dest === "Cabotaje" && d.pCurr === "Pesos") {
-                prod_fare = (d.fare / (1 + IVA)) * d.tdc;
-                prod_tax = prod_fare * IVA;           
+                prod_fare = (d.fare / (1 + iva)) * d.tdc;
+                prod_tax = prod_fare * iva;           
             } else if (d.dest === "Internacional" && d.pCurr === "Pesos") {
                 prod_fare = d.fare * d.tdc;
-                prod_tax = ((prod_fare * COMI_RICALE) * IVA) + ((prod_fare * MUP_RICALE) * RG_3819);
+                prod_tax = ((prod_fare * comi_Ricale) * iva) + ((prod_fare * mup_Ricale) * rg_3819);
             } else { 
                 prod_fare = d.fare;
-                prod_tax = (prod_fare * COMI_RICALE) * IVA;
-            } 
-        
+                prod_tax = (prod_fare * comi_Ricale) * iva;
+            }
+            
+            let new_sfee = 0;
+            if (d.pCurr === "Pesos") { new_sfee = d.sfee*d.tdc } else new_sfee = d.sfee
+
             const prod_cost = prod_fare + prod_tax;
-            const val_prod = prod_cost + d.sfee;
-            const prod_comi = prod_fare * COMI_PROM_ACADEMY;
-            const rent_final = prod_comi + (d.sfee / 1.21);
+            const val_prod = prod_cost + new_sfee;
+            const prod_comi = prod_fare * comi_Prom;
+            const rent_final = prod_comi + (new_sfee / 1.21);
             
             let sale_info = 0;
             if (d.pTipe === "Transferencia" || (d.pTipe === "Deposito" && d.dest === "Cabotaje")) {
-                sale_info = val_prod / (1 - TRF_CHARGE);
+                sale_info = val_prod / (1 - trf_charge);
             } else if (d.pTipe === "Deposito" && d.dest === "Internacional") {
-                let val_rg_4815 = (prod_fare * MUP_RICALE) * RG_4815;
-                sale_info = (val_prod + val_rg_4815) / (1 - TRF_CHARGE);
+                let val_rg_4815 = (prod_fare * mup_Ricale) * rg_4815;
+                sale_info = (val_prod + val_rg_4815) / (1 - trf_charge);
             } else {
                 sale_info = val_prod; 
             }
             
             const gastos = sale_info - val_prod
-            alert (`Importe gastos: $${gastos.toFixed(2)}`)
+           
 
             // Actualizar Interfaz
             document.getElementById('out_pCurr').innerText = d.pCurr;
+            document.getElementById('out_pTipe').innerText = d.pTipe;
             document.getElementById('out_fare').innerText = prod_fare.toFixed(2);
             document.getElementById('out_tax').innerText = prod_tax.toFixed(2);
             document.getElementById('out_cost').innerText = prod_cost.toFixed(2);
+            document.getElementById('out_comi').innerText = prod_comi.toFixed(2);
+            document.getElementById('out_val_prod').innerText = val_prod.toFixed(2);
             document.getElementById('out_sale_info').innerText = sale_info.toFixed(2);
             document.getElementById('out_rent_final').innerText = rent_final.toFixed(2);
             document.getElementById('out_gastos').innerText = gastos.toFixed(2);
 
-            datosCoti = {...d, prod_fare, prod_tax, sale_info, rent_final, gastos};
+            datosCoti = {...d, new_sfee, prod_fare, prod_tax, prod_cost, prod_comi, val_prod, sale_info, rent_final, gastos};
+            
         }
+        
 
         function descargarPDF() {
-            if (!datosCoti.sale_info) { alert("Primero calcule la cotización."); return; }
+            if (!datosCoti.sale_info) { swal("Ooops","Para descargar el PDF primero debes realizar una cotización.","warning" ); return; }
+
             const content = `
-                <h3>Datos del Cliente</h3>
-                <p>ID: ${datosCoti.cli} | Reserva: ${datosCoti.pnr}</p>
+                <h3 style="color: #BB1010">Cotización StayRED - ${datosCoti.pnr}</h3>
                 <hr>
-                <h3>Detalle de Importes (${datosCoti.pCurr})</h3>
-                <p>Tarifa Base: ${datosCoti.prod_fare.toFixed(2)}</p>
+                <h4>Datos del Cliente</h4>
+                <p>ID_Cliente: ${datosCoti.cli} - CUIT: ${datosCoti.cuit} </p>
+                <hr>
+                <h4>Detalle de la cotización ${datosCoti.dest}</h4>
+                <p>Moneda de Pago: ${datosCoti.pCurr}</p>
+                <p>Forma de Pago: ${datosCoti.pTipe}</p>
+                <p>Tarifa sin Impuestos: ${datosCoti.prod_fare.toFixed(2)}</p>
                 <p>Impuestos y Percepciones: ${datosCoti.prod_tax.toFixed(2)}</p>
-                <p>Fee Adicional: ${datosCoti.sfee.toFixed(2)}</p>
-                <p>Gastos por ${datosCoti.pTipe}: ${datosCoti.gastos}</p>
-                <h2 style="color: #BB1010">PRECIO FINAL: ${datosCoti.sale_info.toFixed(2)} ${datosCoti.pCurr}</h2>
+                <p>Comisión del Producto StayRED: ${datosCoti.prod_comi.toFixed(2)}</p>
+                <p>Fee Adicional Promotor: ${datosCoti.new_sfee.toFixed(2)}</p>
+                <p>Gastos por ${datosCoti.pTipe}: ${datosCoti.gastos.toFixed(2)}</p>
+                <hr>
+                <h3 style="color: #BB1010">Importe Final a Facturar al Cliente: ${datosCoti.pCurr} ${datosCoti.sale_info.toFixed(2)} </h3>
+                <h3 style="color: #BB1010">Rentabilidad Total a Cobrar Neta de Impuestos: ${datosCoti.pCurr} ${datosCoti.rent_final.toFixed(2)} </h3>
+                <hr>
             `;
             const element = document.getElementById('resumen-pdf');
             document.getElementById('pdf-content').innerHTML = content;
             element.style.display = 'block';
+            
             html2pdf().from(element).set({
-                margin: 1, filename: `StayRED_${datosCoti.pnr || 'Coti'}.pdf`,
-                html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                margin: 1,
+                filename: `Cotización ${datos/Coti.pnr || 'StayRED'}.pdf`,
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
             }).save().then(() => { element.style.display = 'none'; });
         }
 
         function enviarEmail() {
-            if (!datosCoti.sale_info) { alert("Calcule la cotización primero."); return; }
+            if (!datosCoti.sale_info) { swal("Ooops","Para enviar el mail primero debes realizar una cotización.","warning" ); return; }
             const asunto = encodeURIComponent(`Cotización StayRED - Reserva ${datosCoti.pnr}`);
             const cuerpo = encodeURIComponent(
-                `Detalles de la cotización terrestre:\n` +
-                `- Cliente: ${datosCoti.cli}\n- Reserva: ${datosCoti.pnr}\n` +
-                `- Destino: ${datosCoti.dest}\n- Pago: ${datosCoti.pTipe}\n` +
-                `-----------------------------------\n` +
-                `PRECIO FINAL: ${datosCoti.sale_info.toFixed(2)} ${datosCoti.pCurr}\n` +
-                `-----------------------------------`
+                `Hola,\nEnvio detalles de la cotización terrestre:\n` +
+                `- Reserva / Localizador: ${datosCoti.pnr}\n` +
+                `- ID_Cliente: ${datosCoti.cli} - CUIT: ${datosCoti.cuit}\n` +
+                `-----------------------------------------------------------------------------\n` +
+                `- Forma de Pago: ${datosCoti.pTipe}\n` +
+                `- Moneda: ${datosCoti.pCurr}\n` +
+                `- Tarifa: ${datosCoti.fare.toFixed(2)}\n` +    
+                `- Impuestos: ${datosCoti.tax.toFixed(2)}\n` +
+                `- Fee Adicional Promotor: ${datosCoti.new_sfee.toFixed(2)}\n` +
+                `- Gastos por Forma de Pago [${datosCoti.pTipe}]: ${datosCoti.gastos.toFixed(2)}\n` +
+                `-----------------------------------------------------------------------------\n` +
+                `- Importe Final a Facturar al Cliente: ${datosCoti.pCurr} ${datosCoti.sale_info.toFixed(2)}\n` +
+                `- Rentabilidad Total a Cobrar Neta de Impuestos: ${datosCoti.pCurr} ${datosCoti.rent_final.toFixed(2)}\n` + 
+                `-----------------------------------------------------------------------------\n` +
+                `-   \n` +
+                `-\nSaludos.`
             );
             window.location.href = `mailto:?subject=${asunto}&body=${cuerpo}`;
         }
