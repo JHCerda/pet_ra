@@ -15,6 +15,7 @@ h3 { text-align: center; color: var(--ricale-red); margin: 0 0 5px 0; }
 h2 { text-align: center; color: var(--ricale-red); margin: 0 0 5px 0; border-bottom: 2px solid var(--ricale-red); padding-bottom: 5px;}
 header { padding: 1em; display:flex ; justify-content: space-between; flex-wrap: wrap;align-items: center; }
 .header_container { font-size: 1.5rem; color: var(--ricale-white) }
+.header_buttons {align-items: center;  }
 a {text-decoration: none; color: var(--ricale-white)}
 ul { font-size: 1.rem; display:flex; list-style: none; }
 li { cursor: pointer; color: var(--ricale-white); padding: 5px 10px; }
@@ -23,7 +24,7 @@ button { background-color: var(--ricale-white); border-radius: 4px; padding: 12p
 .in_button:hover { background-color:var(--ricale-teal); color: var(--ricale-white) }
 .reg_button:hover { background-color:var(--ricale-dark-teal); color: var(--ricale-white) }
 .home { display: flex; flex-direction: row; min-height: 80%;}
-.menu_izquierdo { min-width: 260px; color: var(--ricale-white); padding: 0px 20px 15px; }
+.menu_izquierdo { min-width: 300px; color: var(--ricale-white); padding: 0px 20px 15px; }
 .list_izquierdo { display: flex; flex-direction: column; font-size: 1rem; padding: 8px 0; align-self: center; gap: 2px;}
 .logo_container {background-color:var(--ricale-white); border-radius: 4px;padding: 10px; text-align: center; margin-bottom: 10px; }
 .logo_academy { width: 80% ;max-width: 150px;}
@@ -36,10 +37,13 @@ footer p{text-align: center; }
 .logo_ricale { width: 100px; margin-right: 10px;}
 /* --- MEDIA QUERIES (Responsividad) --- */
 @media (max-width: 992px) { 
-    .home { flex-direction: column; }
+    .home { flex-direction: column; align-items: center;}
     .menu_izquierdo {width: 100%; height: auto; }
-    .header_container h1 {font-size: 1.2rem;}
+    .panel_derecho {flex-direction: column;align-items: center; margin: auto;}
+    .header_container {font-size: 100%;}
+    .header_buttons{margin: auto;}
 }
 @media (min-width: 1200px) { 
-    .header_container { margin: 0;}
+    .header_container {font-size: 100%;}
+    .header_buttons{margin: auto;}
 }
