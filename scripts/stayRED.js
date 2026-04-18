@@ -13,8 +13,6 @@ inputsDecimales.forEach(input => {
     });
 });
 
-// Detectamos la moneda seleccionada en el formulario
-//const monedaSeleccionada = document.getElementById('pay_curr').value === 'Pesos' ? 'ARS' : 'USD';
 
 // Función para formatear moneda
 function formatCurrency(valor, moneda ="ARS") {
@@ -40,7 +38,7 @@ function calcular() {
     };
     
     // Validaciones del código original
-    if (!d.dest || !d.pCurr || !d.pTipe || d.fare === 0) { swal("Verificar los Datos","Todos los campos son obligatorios para realizar la cotización.","error"); return; }
+    if (!d.dest || !d.pCurr || !d.pTipe || !d.fare ) { swal("Verificar los Datos","Todos los campos son obligatorios para realizar la cotización.","error"); return; }
     if (d.pTipe === "Tarjeta" && d.pCurr === "Dólares") { swal("","Por el momento NO estan habilitados los pagos en Dólares con Tarjeta de Crédito.","error" ); return; }
     if (d.pTipe === "Tarjeta" && d.dest === "Internacional") { swal("","Consultar pagos al exterior con tarjeta a comercial@ricale.com","warning"); return; }
     if (d.dest === "Cabotaje" && d.pCurr === "Dólares") { swal("","Servicios en Argentina deben pagarse en Pesos.","warning"); return; }

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario - Ricale Academy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../styles/registro.css">
+</head>
+<body>
+    <div class="container">
+        <span><a href="../index.html">Volver</a></span>
+        <div class="header">
+            <h2>CREAR CUENTA</h2>
+            <p>Complete sus datos para acceder a la plataforma</p>
+        </div>
+
+        <form id="registroForm">
+            <div class="section-title">Datos Personales</div>
+            <div class="row">
+                <div class="col">
+                    <label>Nombre *</label>
+                    <input type="text" id="nombre" required>
+                </div>
+                <div class="col">
+                    <label>Apellido *</label>
+                    <input type="text" id="apellido" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>CUIT (Solo números) *</label>
+                    <input type="text" id="cuit" maxlength="11" required>
+                </div>
+                <div class="col">
+                    <label>Celular *</label>
+                    <input type="tel" id="celular" placeholder="Ej: 1122334455" required>
+                </div>
+            </div>
+
+            <div class="section-title">Credenciales de Acceso</div>
+            <div class="form-group">
+                <label>Correo Electrónico *</label>
+                <input type="email" id="email" required>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Contraseña *</label>
+                    <input type="password" id="password" required>
+                </div>
+                <div class="col">
+                    <label>Confirmar Contraseña *</label>
+                    <input type="password" id="confirmPassword" required>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-register">REGISTRARSE</button>
+            </div>
+        </form>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
